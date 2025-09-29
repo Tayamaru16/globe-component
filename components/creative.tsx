@@ -82,6 +82,8 @@ const customers = [
   },
 ]
 
+const tabSequence = ["home", "dashboard", "customers", "calls", "operator", "upload"] as const
+
 type SidebarSubItem = {
   title: string
   url: string
@@ -162,7 +164,14 @@ const sidebarItems: SidebarItem[] = [
   },
 ]
 
-const tabSequence = ["home", "dashboard", "customers", "calls", "operator", "upload"] as const
+const MotionButton = motion(Button)
+
+const buttonMotionProps = {
+  whileHover: { scale: 1.05 },
+  whileTap: { scale: 0.97 },
+  transition: { type: "spring", stiffness: 320, damping: 20 },
+} as const
+
 
 export function DesignaliCreative() {
   const [progress, setProgress] = useState(0)
@@ -284,9 +293,14 @@ export function DesignaliCreative() {
                 <p className="text-xs text-muted-foreground">カスタマーサポート</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+            <MotionButton
+              {...buttonMotionProps}
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(false)}
+            >
               <X className="h-5 w-5" />
-            </Button>
+            </MotionButton>
           </div>
 
           <div className="px-3 py-2">
@@ -547,43 +561,58 @@ export function DesignaliCreative() {
         }}
       >
         <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
+          <MotionButton
+            {...buttonMotionProps}
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(true)}
+          >
             <Menu className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="hidden md:flex" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          </MotionButton>
+          <MotionButton
+            {...buttonMotionProps}
+            variant="ghost"
+            size="icon"
+            className="hidden md:flex"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
             <PanelLeft className="h-5 w-5" />
-          </Button>
+          </MotionButton>
           <div className="flex flex-1 items-center justify-between">
             <h1 className="text-xl font-semibold">Reco カスタマーサポート</h1>
             <div className="flex items-center gap-3">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  className="rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg px-6 py-2 font-semibold"
-                  size="default"
-                  onClick={() => handleTabChange("operator")}
-                >
-                  <UserCheck className="mr-2 h-5 w-5" />
-                  オペレーターコンソールへ
-                </Button>
-              </motion.div>
+              <MotionButton
+                {...buttonMotionProps}
+                className="rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg px-6 py-2 font-semibold"
+                size="default"
+                onClick={() => handleTabChange("operator")}
+              >
+                <UserCheck className="mr-2 h-5 w-5" />
+                オペレーターコンソールへ
+              </MotionButton>
 
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  className="rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg px-6 py-2 font-semibold"
-                  size="default"
-                  onClick={() => handleTabChange("customers")}
-                >
-                  <PhoneCall className="mr-2 h-5 w-5" />
-                  架電を開始
-                </Button>
-              </motion.div>
+              <MotionButton
+                {...buttonMotionProps}
+                className="rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg px-6 py-2 font-semibold"
+                size="default"
+                onClick={() => handleTabChange("customers")}
+              >
+                <PhoneCall className="mr-2 h-5 w-5" />
+                架電を開始
+              </MotionButton>
 
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-2xl">
+                    <MotionButton
+                      {...buttonMotionProps}
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-2xl"
+                    >
                       <Cloud className="h-5 w-5" />
-                    </Button>
+                    </MotionButton>
                   </TooltipTrigger>
                   <TooltipContent>クラウドストレージ</TooltipContent>
                 </Tooltip>
@@ -592,9 +621,14 @@ export function DesignaliCreative() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-2xl">
+                    <MotionButton
+                      {...buttonMotionProps}
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-2xl"
+                    >
                       <MessageSquare className="h-5 w-5" />
-                    </Button>
+                    </MotionButton>
                   </TooltipTrigger>
                   <TooltipContent>メッセージ</TooltipContent>
                 </Tooltip>
@@ -603,14 +637,19 @@ export function DesignaliCreative() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-2xl relative">
+                    <MotionButton
+                      {...buttonMotionProps}
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-2xl relative"
+                    >
                       <Bell className="h-5 w-5" />
                       {notifications > 0 && (
                         <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                           {notifications}
                         </span>
                       )}
-                    </Button>
+                    </MotionButton>
                   </TooltipTrigger>
                   <TooltipContent>通知</TooltipContent>
                 </Tooltip>
@@ -715,20 +754,24 @@ export function DesignaliCreative() {
                       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                         <div className="space-y-4">
                           <Badge className="bg-white/20 text-white hover:bg-white/30 rounded-xl">AI電話システム</Badge>
-                          <h2 className="text-3xl font-bold">Reco カスタマーサポートへようこそ</h2>
+                          <h2 className="text-3xl font-bold">Recoへようこそ</h2>
                           <p className="max-w-[600px] text-white/80">
                             AI自動電話システムで効率的な営業活動を実行し、顧客との関係を強化しましょう。
                           </p>
                           <div className="flex flex-wrap gap-3">
-                            <Button className="rounded-2xl bg-white text-indigo-700 hover:bg-white/90">
+                            <MotionButton
+                              {...buttonMotionProps}
+                              className="rounded-2xl bg-white text-indigo-700 hover:bg-white/90"
+                            >
                               架電を開始
-                            </Button>
-                            <Button
+                            </MotionButton>
+                            <MotionButton
+                              {...buttonMotionProps}
                               variant="outline"
                               className="rounded-2xl bg-transparent border-white text-white hover:bg-white/10"
                             >
                               詳細な分析を確認
-                            </Button>
+                            </MotionButton>
                           </div>
                         </div>
                       </div>
@@ -806,9 +849,13 @@ export function DesignaliCreative() {
                   <section className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h2 className="text-2xl font-semibold">最新情報</h2>
-                      <Button variant="ghost" className="rounded-2xl">
+                      <MotionButton
+                        {...buttonMotionProps}
+                        variant="ghost"
+                        className="rounded-2xl"
+                      >
                         すべて表示
-                      </Button>
+                      </MotionButton>
                     </div>
                     <div className="rounded-3xl border">
                       <div className="divide-y">
@@ -1020,21 +1067,23 @@ export function DesignaliCreative() {
                           <p className="max-w-[600px] text-white/80">連絡先の管理と架電状況を確認できます</p>
                         </div>
                         <div className="flex gap-3">
-                          <Button
+                          <MotionButton
+                            {...buttonMotionProps}
                             variant="outline"
                             className="rounded-2xl bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
                             size="default"
                           >
                             <Upload className="mr-2 h-4 w-4" />
                             CSVアップロード
-                          </Button>
-                          <Button
+                          </MotionButton>
+                          <MotionButton
+                            {...buttonMotionProps}
                             className="rounded-2xl bg-white text-teal-700 hover:bg-white/90 shadow-lg px-6 py-2 font-semibold"
                             size="default"
                           >
                             <Plus className="mr-2 h-4 w-4" />
                             連絡先追加
-                          </Button>
+                          </MotionButton>
                         </div>
                       </div>
                     </motion.div>
@@ -1049,15 +1098,17 @@ export function DesignaliCreative() {
                           <CardDescription>連絡先の管理と架電状況を確認できます</CardDescription>
                         </div>
                         <div className="flex gap-2">
-                          <Button
+                          <MotionButton
+                            {...buttonMotionProps}
                             className="rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg px-4 py-2 font-semibold"
                             size="default"
                           >
                             <PhoneCall className="mr-2 h-4 w-4" />
                             一括架電を開始
-                          </Button>
+                          </MotionButton>
                           {/* Always show bulk call button with dynamic text and disabled state */}
-                          <Button
+                          <MotionButton
+                            {...buttonMotionProps}
                             className={cn(
                               "rounded-2xl shadow-lg px-4 py-2 font-semibold",
                               selectedCustomers.size > 0
@@ -1069,7 +1120,7 @@ export function DesignaliCreative() {
                           >
                             <PhoneCall className="mr-2 h-4 w-4" />
                             選択した{selectedCustomers.size}件を架電
-                          </Button>
+                          </MotionButton>
                         </div>
                       </div>
                     </CardHeader>
@@ -1127,27 +1178,30 @@ export function DesignaliCreative() {
                               <div className="col-span-1">{customer.lastContact}</div>
                               <div className="col-span-2">
                                 <div className="flex gap-2">
-                                  <Button
-                                    className="rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-sm px-3 py-1.5 text-sm font-medium h-8"
+                                  <MotionButton
+                                    {...buttonMotionProps}
+                                    className="rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg px-4 py-2 text-sm font-semibold"
                                     size="sm"
                                   >
                                     <PhoneCall className="mr-1 h-3 w-3" />
                                     架電
-                                  </Button>
-                                  <Button
-                                    className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-600 text-white shadow-sm px-3 py-1.5 text-sm font-medium h-8"
+                                  </MotionButton>
+                                  <MotionButton
+                                    {...buttonMotionProps}
+                                    className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-600 text-white shadow-lg px-4 py-2 text-sm font-semibold"
                                     size="sm"
                                   >
                                     <FileText className="mr-1 h-3 w-3" />
                                     詳細
-                                  </Button>
-                                  <Button
+                                  </MotionButton>
+                                  <MotionButton
+                                    {...buttonMotionProps}
                                     variant="ghost"
                                     size="sm"
-                                    className="rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 text-sm h-8"
+                                    className="rounded-2xl text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 text-sm"
                                   >
                                     削除
-                                  </Button>
+                                  </MotionButton>
                                 </div>
                               </div>
                             </div>
@@ -1179,16 +1233,30 @@ export function DesignaliCreative() {
                   <Card className="rounded-3xl">
                     <CardContent className="p-6">
                       <div className="flex flex-wrap gap-3 mb-4">
-                        <Button className="rounded-2xl">全て</Button>
-                        <Button variant="outline" className="rounded-2xl bg-transparent">
+                        <MotionButton {...buttonMotionProps} className="rounded-2xl">
+                          全て
+                        </MotionButton>
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="outline"
+                          className="rounded-2xl bg-transparent"
+                        >
                           完了
-                        </Button>
-                        <Button variant="outline" className="rounded-2xl bg-transparent">
+                        </MotionButton>
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="outline"
+                          className="rounded-2xl bg-transparent"
+                        >
                           進行中
-                        </Button>
-                        <Button variant="outline" className="rounded-2xl bg-transparent">
+                        </MotionButton>
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="outline"
+                          className="rounded-2xl bg-transparent"
+                        >
                           失敗
-                        </Button>
+                        </MotionButton>
                         <div className="flex-1"></div>
                         <div className="relative">
                           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -1250,7 +1318,12 @@ export function DesignaliCreative() {
                           </div>
                         </div>
                       </div>
-                      <Button className="w-full rounded-2xl bg-orange-600 hover:bg-orange-700">アップロード実行</Button>
+                      <MotionButton
+                        {...buttonMotionProps}
+                        className="w-full rounded-2xl bg-orange-600 hover:bg-orange-700"
+                      >
+                        アップロード実行
+                      </MotionButton>
                     </CardContent>
                   </Card>
 
@@ -1305,7 +1378,6 @@ export function DesignaliCreative() {
                     >
                       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div className="space-y-2">
-                          <Badge className="bg-white/20 text-white hover:bg-white/30 rounded-xl">専用コンソール</Badge>
                           <h2 className="text-3xl font-bold">オペレーター</h2>
                           <p className="max-w-[600px] text-white/80">
                             オペレーター専用の高度な機能とツールにアクセスできます
@@ -1343,28 +1415,53 @@ export function DesignaliCreative() {
                         </div>
                       </div>
                       <div className="flex gap-3">
-                        <Button className="rounded-2xl">接続</Button>
-                        <Button variant="outline" className="rounded-2xl bg-transparent">
+                        <MotionButton {...buttonMotionProps} className="rounded-2xl">
+                          接続
+                        </MotionButton>
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="outline"
+                          className="rounded-2xl bg-transparent"
+                        >
                           切断
-                        </Button>
-                        <Button variant="outline" className="rounded-2xl bg-transparent">
+                        </MotionButton>
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="outline"
+                          className="rounded-2xl bg-transparent"
+                        >
                           マイク更新
-                        </Button>
+                        </MotionButton>
                       </div>
                       <div className="text-sm text-muted-foreground">
                         接続後にモニターやへの切替を実行してください。音量調整は基本設定で行えます。
                       </div>
                       <div className="flex items-center gap-4 p-4 bg-muted rounded-2xl">
-                        <Button variant="ghost" size="icon" className="rounded-2xl">
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-2xl"
+                        >
                           <Play className="h-4 w-4" />
-                        </Button>
+                        </MotionButton>
                         <div className="flex-1 text-sm">0:00 / 0:00</div>
-                        <Button variant="ghost" size="icon" className="rounded-2xl">
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-2xl"
+                        >
                           <Volume2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="rounded-2xl">
+                        </MotionButton>
+                        <MotionButton
+                          {...buttonMotionProps}
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-2xl"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        </MotionButton>
                       </div>
                     </CardContent>
                   </Card>
