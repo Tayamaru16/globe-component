@@ -12,14 +12,12 @@ import {
   Menu,
   MessageSquare,
   PanelLeft,
-  Play,
   Plus,
   Search,
   Settings,
   TrendingUp,
   Users,
   Clock,
-  MoreHorizontal,
   X,
   Phone,
   PhoneCall,
@@ -27,7 +25,6 @@ import {
   BarChart3,
   PieChart,
   UserCheck,
-  Volume2,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -38,6 +35,8 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import {
   LineChart,
@@ -79,6 +78,54 @@ const customers = [
     attempts: "0/4",
     lastContact: "-",
     nextScheduled: "-",
+  },
+]
+
+const interventionRequests = [
+  {
+    id: "session-001",
+    customerName: "田中太郎",
+    callTopic: "料金プランの更新に関する相談",
+    summary:
+      "AIエージェントが料金プランの違いを説明中に、法人向けプランでの契約条件について詳細な質問が発生しています。",
+    unansweredQuestions: [
+      "法人契約の場合の最短利用期間はどれくらいか",
+      "途中解約時の違約金計算方法はどうなるか",
+    ],
+    requestedAt: "14:05",
+    status: "介入待ち",
+  },
+  {
+    id: "session-002",
+    customerName: "鈴木花子",
+    callTopic: "サービス導入前の技術的な懸念",
+    summary:
+      "接続テストの案内中に、社内ネットワーク制限で利用できるかどうかという専門的な問い合わせがありました。",
+    unansweredQuestions: [
+      "プロキシ経由での接続方法は提供しているか",
+      "利用可能な暗号化方式の一覧が欲しい",
+    ],
+    requestedAt: "13:52",
+    status: "情報確認中",
+  },
+]
+
+const activeCallSessions = [
+  {
+    id: "call-101",
+    customer: "佐藤花子",
+    duration: "08:24",
+    status: "通話中",
+    operator: "AIアシスタント",
+    quality: "良好",
+  },
+  {
+    id: "call-102",
+    customer: "山田太郎",
+    duration: "03:12",
+    status: "エスカレーション準備",
+    operator: "AIアシスタント",
+    quality: "要確認",
   },
 ]
 
@@ -181,6 +228,7 @@ export function DesignaliCreative() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
   const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(new Set())
+  const { toast } = useToast()
 
   const tabCount = tabSequence.length
   const tabWidthPercent = 100 / tabCount
@@ -227,6 +275,16 @@ export function DesignaliCreative() {
     }
   }
 
+  const handleCallStart = () => {
+    toast({
+      title: "架電を開始しました",
+      description: "画面上部の「オペレーターコンソールへ」ボタンを押して移動してください。",
+      duration: 4800,
+      className:
+        "border border-primary/30 bg-background/95 text-foreground shadow-xl backdrop-blur-sm [&_[toast-close]]:text-muted-foreground [&_[toast-close]]:hover:text-foreground",
+    })
+  }
+
   const toggleCustomerSelection = (customerId: string) => {
     setSelectedCustomers((prev) => {
       const newSet = new Set(prev)
@@ -248,7 +306,9 @@ export function DesignaliCreative() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
+    <>
+      <Toaster />
+      <div className="relative min-h-screen overflow-hidden bg-background">
       {/* Animated gradient background */}
       <motion.div
         className="absolute inset-0 -z-10 opacity-20"
@@ -1102,6 +1162,7 @@ export function DesignaliCreative() {
                             {...buttonMotionProps}
                             className="rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg px-4 py-2 font-semibold"
                             size="default"
+                            onClick={handleCallStart}
                           >
                             <PhoneCall className="mr-2 h-4 w-4" />
                             一括架電を開始
@@ -1117,6 +1178,7 @@ export function DesignaliCreative() {
                             )}
                             size="default"
                             disabled={selectedCustomers.size === 0}
+                            onClick={handleCallStart}
                           >
                             <PhoneCall className="mr-2 h-4 w-4" />
                             選択した{selectedCustomers.size}件を架電
@@ -1182,6 +1244,7 @@ export function DesignaliCreative() {
                                     {...buttonMotionProps}
                                     className="rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg px-4 py-2 text-sm font-semibold"
                                     size="sm"
+                                    onClick={handleCallStart}
                                   >
                                     <PhoneCall className="mr-1 h-3 w-3" />
                                     架電
@@ -1376,256 +1439,207 @@ export function DesignaliCreative() {
                       transition={{ duration: 0.5 }}
                       className="overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 p-8 text-white"
                     >
-                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <div className="space-y-2">
-                          <h2 className="text-3xl font-bold">オペレーター</h2>
-                          <p className="max-w-[600px] text-white/80">
-                            オペレーター専用の高度な機能とツールにアクセスできます
-                          </p>
-                        </div>
+                      <div className="space-y-2">
+                        <h2 className="text-3xl font-bold">オペレーターコンソール</h2>
+                        <p className="max-w-[640px] text-white/80">
+                          AI応対から人へ切り替える必要があるセッションの確認と介入を行うための専用ビューです。
+                        </p>
                       </div>
                     </motion.div>
                   </section>
 
-                  {/* WebRTC Terminal */}
                   <Card className="rounded-3xl">
                     <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle>WebRTC オペレーター端末</CardTitle>
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                          <CardTitle>WebRTC 接続設定</CardTitle>
+                          <CardDescription>オペレーター端末の接続情報を確認・更新します</CardDescription>
+                        </div>
                         <Badge variant="outline" className="rounded-xl">
                           状態: 未接続
                         </Badge>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <div>
+                    <CardContent className="space-y-6">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
                           <label className="text-sm font-medium">WebSocket URL</label>
-                          <Input defaultValue="ws://localhost:8088/ws" className="rounded-2xl" />
+                          <Input defaultValue="wss://webrtc-gateway.example.com/ws" className="rounded-2xl" />
                         </div>
-                        <div>
+                        <div className="space-y-2">
                           <label className="text-sm font-medium">SIP URI</label>
-                          <Input defaultValue="sip:webrtc-op@localhost" className="rounded-2xl" />
+                          <Input defaultValue="sip:operator@example.com" className="rounded-2xl" />
                         </div>
-                        <div>
-                          <label className="text-sm font-medium">マイク</label>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">マイクデバイス</label>
                           <select className="w-full rounded-2xl border border-input bg-background px-3 py-2">
                             <option>MacBook Proのマイク (Built-in)</option>
+                            <option>USB Audio Interface</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">スピーカー</label>
+                          <select className="w-full rounded-2xl border border-input bg-background px-3 py-2">
+                            <option>内蔵スピーカー</option>
+                            <option>Bluetooth ヘッドセット</option>
                           </select>
                         </div>
                       </div>
-                      <div className="flex gap-3">
-                        <MotionButton {...buttonMotionProps} className="rounded-2xl">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <MotionButton
+                          {...buttonMotionProps}
+                          className="rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-lg px-4"
+                        >
                           接続
                         </MotionButton>
                         <MotionButton
                           {...buttonMotionProps}
                           variant="outline"
-                          className="rounded-2xl bg-transparent"
+                          className="rounded-2xl px-4"
                         >
                           切断
                         </MotionButton>
                         <MotionButton
                           {...buttonMotionProps}
                           variant="outline"
-                          className="rounded-2xl bg-transparent"
+                          className="rounded-2xl px-4"
                         >
-                          マイク更新
+                          デバイスを再読み込み
                         </MotionButton>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        接続後にモニターやへの切替を実行してください。音量調整は基本設定で行えます。
-                      </div>
-                      <div className="flex items-center gap-4 p-4 bg-muted rounded-2xl">
-                        <MotionButton
-                          {...buttonMotionProps}
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-2xl"
-                        >
-                          <Play className="h-4 w-4" />
-                        </MotionButton>
-                        <div className="flex-1 text-sm">0:00 / 0:00</div>
-                        <MotionButton
-                          {...buttonMotionProps}
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-2xl"
-                        >
-                          <Volume2 className="h-4 w-4" />
-                        </MotionButton>
-                        <MotionButton
-                          {...buttonMotionProps}
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-2xl"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </MotionButton>
-                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        接続後は介入希望セッションで「介入する」ボタンを押して、AIから人への切り替えを行ってください。
+                      </p>
                     </CardContent>
                   </Card>
 
-                  {/* Operator Status */}
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <Card className="rounded-3xl">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-muted-foreground">オペレーター状態</p>
-                            <p className="text-2xl font-bold">オンライン</p>
-                          </div>
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100">
-                            <UserCheck className="h-6 w-6 text-green-600" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="rounded-3xl">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-muted-foreground">処理中通話</p>
-                            <p className="text-2xl font-bold">3</p>
-                          </div>
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100">
-                            <PhoneCall className="h-6 w-6 text-blue-600" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="rounded-3xl">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-muted-foreground">待機中案件</p>
-                            <p className="text-2xl font-bold">12</p>
-                          </div>
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100">
-                            <Clock className="h-6 w-6 text-orange-600" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="rounded-3xl">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-muted-foreground">今日の処理数</p>
-                            <p className="text-2xl font-bold">28</p>
-                          </div>
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100">
-                            <TrendingUp className="h-6 w-6 text-purple-600" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Advanced Controls */}
                   <Card className="rounded-3xl">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Settings className="h-5 w-5" />
-                        高度なコントロール
+                        <MessageSquare className="h-5 w-5" />
+                        介入希望セッション
                       </CardTitle>
-                      <CardDescription>オペレーター専用の詳細設定と管理機能</CardDescription>
+                      <CardDescription>
+                        AIが想定外の質問に直面した通話の内容を確認し、人の対応へ切り替えます
+                      </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
-                          <Card className="rounded-3xl border-l-4 border-l-violet-500 hover:border-primary/50 transition-all duration-300">
-                            <CardContent className="p-6">
-                              <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100">
-                                  <Volume2 className="h-6 w-6 text-violet-600" />
-                                </div>
-                                <div>
-                                  <h3 className="font-semibold">音声品質管理</h3>
-                                  <p className="text-sm text-muted-foreground">通話音声の品質監視と調整</p>
-                                </div>
+                    <CardContent className="space-y-4">
+                      {interventionRequests.length === 0 ? (
+                        <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+                          現在、介入が必要なセッションはありません。
+                        </div>
+                      ) : (
+                        interventionRequests.map((request) => (
+                          <div
+                            key={request.id}
+                            className="space-y-4 rounded-2xl border bg-muted/30 p-4 md:p-6"
+                          >
+                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">
+                                  {request.requestedAt} にAIから介入リクエスト
+                                </p>
+                                <h3 className="text-lg font-semibold">{request.customerName}</h3>
+                                <p className="text-sm text-muted-foreground">{request.callTopic}</p>
                               </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-
-                        <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
-                          <Card className="rounded-3xl border-l-4 border-l-blue-500 hover:border-primary/50 transition-all duration-300">
-                            <CardContent className="p-6">
-                              <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100">
-                                  <MessageSquare className="h-6 w-6 text-blue-600" />
-                                </div>
-                                <div>
-                                  <h3 className="font-semibold">リアルタイム監視</h3>
-                                  <p className="text-sm text-muted-foreground">進行中の通話をリアルタイムで監視</p>
-                                </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="secondary" className="rounded-xl">
+                                  {request.status}
+                                </Badge>
+                                <MotionButton
+                                  {...buttonMotionProps}
+                                  size="sm"
+                                  className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg px-4"
+                                >
+                                  介入する
+                                </MotionButton>
                               </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-
-                        <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
-                          <Card className="rounded-3xl border-l-4 border-l-green-500 hover:border-primary/50 transition-all duration-300">
-                            <CardContent className="p-6">
-                              <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100">
-                                  <BarChart3 className="h-6 w-6 text-green-600" />
-                                </div>
-                                <div>
-                                  <h3 className="font-semibold">詳細レポート</h3>
-                                  <p className="text-sm text-muted-foreground">オペレーター専用の詳細分析レポート</p>
-                                </div>
+                            </div>
+                            <div className="space-y-2 text-sm leading-relaxed">
+                              <div className="font-medium text-foreground">通話サマリー</div>
+                              <p className="text-muted-foreground">{request.summary}</p>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="font-medium text-foreground">未対応の質問</div>
+                              <div className="flex flex-wrap gap-2">
+                                {request.unansweredQuestions.map((question) => (
+                                  <Badge
+                                    key={question}
+                                    variant="outline"
+                                    className="rounded-xl whitespace-pre-wrap text-left"
+                                  >
+                                    {question}
+                                  </Badge>
+                                ))}
                               </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-
-                        <motion.div whileHover={{ scale: 1.02, y: -5 }} whileTap={{ scale: 0.98 }}>
-                          <Card className="rounded-3xl border-l-4 border-l-red-500 hover:border-primary/50 transition-all duration-300">
-                            <CardContent className="p-6">
-                              <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100">
-                                  <Bell className="h-6 w-6 text-red-600" />
-                                </div>
-                                <div>
-                                  <h3 className="font-semibold">緊急対応</h3>
-                                  <p className="text-sm text-muted-foreground">緊急事態への迅速な対応機能</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </CardContent>
                   </Card>
 
-                  {/* Active Calls Monitor */}
                   <Card className="rounded-3xl">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <PhoneCall className="h-5 w-5" />
                         アクティブ通話監視
                       </CardTitle>
-                      <CardDescription>現在進行中の通話をリアルタイムで監視</CardDescription>
+                      <CardDescription>
+                        現在進行中の会話を監視し、必要に応じて即座に介入します
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="rounded-2xl border overflow-hidden">
-                        <div className="bg-muted/50 p-3 grid grid-cols-12 text-sm font-medium">
+                        <div className="grid grid-cols-12 bg-muted/50 p-3 text-sm font-medium">
                           <div className="col-span-3">顧客情報</div>
                           <div className="col-span-2">通話時間</div>
                           <div className="col-span-2">ステータス</div>
-                          <div className="col-span-2">オペレーター</div>
+                          <div className="col-span-2">担当</div>
                           <div className="col-span-2">品質</div>
-                          <div className="col-span-1">操作</div>
+                          <div className="col-span-1 text-right">操作</div>
                         </div>
-                        <div className="p-8 text-center text-muted-foreground">
-                          <PhoneCall className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                          <p>現在アクティブな通話はありません</p>
-                        </div>
+                        {activeCallSessions.length === 0 ? (
+                          <div className="p-8 text-center text-sm text-muted-foreground">
+                            現在アクティブな通話はありません。
+                          </div>
+                        ) : (
+                          activeCallSessions.map((call) => (
+                            <div
+                              key={call.id}
+                              className="grid grid-cols-12 items-center gap-2 border-t p-4 text-sm"
+                            >
+                              <div className="col-span-3 font-medium">{call.customer}</div>
+                              <div className="col-span-2">{call.duration}</div>
+                              <div className="col-span-2">
+                                <Badge variant="outline" className="rounded-xl">
+                                  {call.status}
+                                </Badge>
+                              </div>
+                              <div className="col-span-2">{call.operator}</div>
+                              <div className="col-span-2">{call.quality}</div>
+                              <div className="col-span-1 flex justify-end">
+                                <div className="flex gap-2">
+                                  <MotionButton
+                                    {...buttonMotionProps}
+                                    size="sm"
+                                    variant="outline"
+                                    className="rounded-2xl"
+                                  >
+                                    モニター
+                                  </MotionButton>
+                                  <MotionButton
+                                    {...buttonMotionProps}
+                                    size="sm"
+                                    className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                                  >
+                                    介入
+                                  </MotionButton>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -1635,5 +1649,6 @@ export function DesignaliCreative() {
         </main>
       </motion.div>
     </div>
+    </>
   )
 }
