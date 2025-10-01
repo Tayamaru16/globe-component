@@ -1541,58 +1541,72 @@ export function DesignaliCreative() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {interventionRequests.length === 0 ? (
-                        <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-                          現在、介入が必要なセッションはありません。
-                        </div>
-                      ) : (
-                        interventionRequests.map((request) => (
-                          <div
-                            key={request.id}
-                            className="space-y-4 rounded-2xl border bg-muted/30 p-4 md:p-6"
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {interventionRequests.length === 0 ? (
+                          <motion.div
+                            key="no-intervention-requests"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -12 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground"
                           >
-                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                              <div className="space-y-1">
-                                <p className="text-xs text-muted-foreground">
-                                  {request.requestedAt} にAIから介入リクエスト
-                                </p>
-                                <h3 className="text-lg font-semibold">{request.customerName}</h3>
-                                <p className="text-sm text-muted-foreground">{request.callTopic}</p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Badge variant="secondary" className="rounded-xl">
-                                  {request.status}
-                                </Badge>
-                                <MotionButton
-                                  {...buttonMotionProps}
-                                  size="sm"
-                                  className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg px-4"
-                                >
-                                  介入する
-                                </MotionButton>
-                              </div>
-                            </div>
-                            <div className="space-y-2 text-sm leading-relaxed">
-                              <div className="font-medium text-foreground">通話サマリー</div>
-                              <p className="text-muted-foreground">{request.summary}</p>
-                            </div>
-                            <div className="space-y-2 text-sm">
-                              <div className="font-medium text-foreground">未対応の質問</div>
-                              <div className="flex flex-wrap gap-2">
-                                {request.unansweredQuestions.map((question) => (
-                                  <Badge
-                                    key={question}
-                                    variant="outline"
-                                    className="rounded-xl whitespace-pre-wrap text-left"
-                                  >
-                                    {question}
+                            現在、介入が必要なセッションはありません。
+                          </motion.div>
+                        ) : (
+                          interventionRequests.map((request) => (
+                            <motion.div
+                              key={request.id}
+                              layout
+                              initial={{ opacity: 0, y: 18, scale: 0.97 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -18, scale: 0.97 }}
+                              transition={{ duration: 0.28, ease: [0.4, 0.0, 0.2, 1] }}
+                              className="space-y-4 rounded-2xl border bg-muted/30 p-4 md:p-6"
+                            >
+                              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                <div className="space-y-1">
+                                  <p className="text-xs text-muted-foreground">
+                                    {request.requestedAt} にAIから介入リクエスト
+                                  </p>
+                                  <h3 className="text-lg font-semibold">{request.customerName}</h3>
+                                  <p className="text-sm text-muted-foreground">{request.callTopic}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="secondary" className="rounded-xl">
+                                    {request.status}
                                   </Badge>
-                                ))}
+                                  <MotionButton
+                                    {...buttonMotionProps}
+                                    size="sm"
+                                    className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg px-4"
+                                  >
+                                    介入する
+                                  </MotionButton>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        ))
-                      )}
+                              <div className="space-y-2 text-sm leading-relaxed">
+                                <div className="font-medium text-foreground">通話サマリー</div>
+                                <p className="text-muted-foreground">{request.summary}</p>
+                              </div>
+                              <div className="space-y-2 text-sm">
+                                <div className="font-medium text-foreground">未対応の質問</div>
+                                <div className="flex flex-wrap gap-2">
+                                  {request.unansweredQuestions.map((question) => (
+                                    <Badge
+                                      key={question}
+                                      variant="outline"
+                                      className="rounded-xl whitespace-pre-wrap text-left"
+                                    >
+                                      {question}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))
+                        )}
+                      </AnimatePresence>
                     </CardContent>
                   </Card>
 
@@ -1607,59 +1621,73 @@ export function DesignaliCreative() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {activeCallSessions.length === 0 ? (
-                        <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-                          現在アクティブな通話はありません。
-                        </div>
-                      ) : (
-                        activeCallSessions.map((call) => (
-                          <div
-                            key={call.id}
-                            className="rounded-3xl border bg-muted/30 p-6 shadow-sm"
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {activeCallSessions.length === 0 ? (
+                          <motion.div
+                            key="no-active-calls"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -12 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground"
                           >
-                            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                              <div className="space-y-1">
+                            現在アクティブな通話はありません。
+                          </motion.div>
+                        ) : (
+                          activeCallSessions.map((call) => (
+                            <motion.div
+                              key={call.id}
+                              layout
+                              initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                              transition={{ duration: 0.28, ease: [0.4, 0.0, 0.2, 1] }}
+                              className="rounded-3xl border bg-muted/30 p-6 shadow-sm"
+                            >
+                              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-3">
+                                    <h3 className="text-xl font-semibold">{call.customer}</h3>
+                                    <Badge variant="secondary" className="rounded-xl">
+                                      {call.status}
+                                    </Badge>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">{call.summary}</p>
+                                </div>
                                 <div className="flex items-center gap-3">
-                                  <h3 className="text-xl font-semibold">{call.customer}</h3>
-                                  <Badge variant="secondary" className="rounded-xl">
-                                    {call.status}
-                                  </Badge>
-                                </div>
-                                <p className="text-sm text-muted-foreground">{call.summary}</p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <div className="rounded-2xl bg-background/80 px-3 py-2 text-sm">
-                                  <span className="text-muted-foreground">経過時間</span>
-                                  <span className="ml-2 font-semibold">{call.duration}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                  <MotionButton
-                                    {...buttonMotionProps}
-                                    size="sm"
-                                    variant="outline"
-                                    className="rounded-2xl"
-                                  >
-                                    モニター
-                                  </MotionButton>
-                                  <MotionButton
-                                    {...buttonMotionProps}
-                                    size="sm"
-                                    className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-                                  >
-                                    介入
-                                  </MotionButton>
+                                  <div className="rounded-2xl bg-background/80 px-3 py-2 text-sm">
+                                    <span className="text-muted-foreground">経過時間</span>
+                                    <span className="ml-2 font-semibold">{call.duration}</span>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <MotionButton
+                                      {...buttonMotionProps}
+                                      size="sm"
+                                      variant="outline"
+                                      className="rounded-2xl"
+                                    >
+                                      モニター
+                                    </MotionButton>
+                                    <MotionButton
+                                      {...buttonMotionProps}
+                                      size="sm"
+                                      className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                                    >
+                                      介入
+                                    </MotionButton>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground">
-                              <div className="flex items-center gap-2 rounded-2xl bg-background/70 px-3 py-1.5">
-                                <MessageSquare className="h-4 w-4" />
-                                AI応対が継続中。人によるフォローアップを準備してください。
+                              <div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-2 rounded-2xl bg-background/70 px-3 py-1.5">
+                                  <MessageSquare className="h-4 w-4" />
+                                  AI応対が継続中。人によるフォローアップを準備してください。
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        ))
-                      )}
+                            </motion.div>
+                          ))
+                        )}
+                      </AnimatePresence>
                       <div className="mt-6 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -1671,39 +1699,63 @@ export function DesignaliCreative() {
                           </Badge>
                         </div>
                         <div className="rounded-2xl border bg-muted/30 overflow-hidden">
-                          {upcomingCallContacts.length === 0 ? (
-                            <div className="p-8 text-center text-sm text-muted-foreground">
-                              現在準備中の通話予定はありません。
-                            </div>
-                          ) : (
-                            <div className="divide-y">
-                              {upcomingCallContacts.map((contact) => (
-                                <div
-                                  key={contact.id}
-                                  className="flex flex-col gap-4 bg-background/80 p-5 text-sm md:flex-row md:items-center md:justify-between"
-                                >
-                                  <div className="space-y-1">
-                                    <div className="text-base font-semibold">{contact.customer}</div>
-                                    <div className="text-muted-foreground">{contact.contact}</div>
-                                    <div className="text-xs text-muted-foreground">{contact.note}</div>
-                                  </div>
-                                  <div className="flex items-center gap-3">
-                                    <Badge variant="outline" className="rounded-xl px-3 py-1 text-xs md:text-sm">
-                                      予定開始 {contact.scheduledTime}
-                                    </Badge>
-                                    <MotionButton
-                                      {...buttonMotionProps}
-                                      size="sm"
-                                      variant="outline"
-                                      className="rounded-2xl border-destructive text-destructive"
+                          <AnimatePresence mode="popLayout" initial={false}>
+                            {upcomingCallContacts.length === 0 ? (
+                              <motion.div
+                                key="no-upcoming-calls"
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -12 }}
+                                transition={{ duration: 0.25, ease: "easeOut" }}
+                                className="p-8 text-center text-sm text-muted-foreground"
+                              >
+                                現在準備中の通話予定はありません。
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="upcoming-call-list"
+                                layout
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.24, ease: "easeOut" }}
+                                className="divide-y"
+                              >
+                                <AnimatePresence initial={false}>
+                                  {upcomingCallContacts.map((contact) => (
+                                    <motion.div
+                                      key={contact.id}
+                                      layout
+                                      initial={{ opacity: 0, y: 14, scale: 0.98 }}
+                                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                                      exit={{ opacity: 0, y: -14, scale: 0.98 }}
+                                      transition={{ duration: 0.26, ease: [0.4, 0.0, 0.2, 1] }}
+                                      className="flex flex-col gap-4 bg-background/80 p-5 text-sm md:flex-row md:items-center md:justify-between"
                                     >
-                                      取り消し
-                                    </MotionButton>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                                      <div className="space-y-1">
+                                        <div className="text-base font-semibold">{contact.customer}</div>
+                                        <div className="text-muted-foreground">{contact.contact}</div>
+                                        <div className="text-xs text-muted-foreground">{contact.note}</div>
+                                      </div>
+                                      <div className="flex items-center gap-3">
+                                        <Badge variant="outline" className="rounded-xl px-3 py-1 text-xs md:text-sm">
+                                          予定開始 {contact.scheduledTime}
+                                        </Badge>
+                                        <MotionButton
+                                          {...buttonMotionProps}
+                                          size="sm"
+                                          variant="outline"
+                                          className="rounded-2xl border-destructive text-destructive"
+                                        >
+                                          取り消し
+                                        </MotionButton>
+                                      </div>
+                                    </motion.div>
+                                  ))}
+                                </AnimatePresence>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
                     </CardContent>
