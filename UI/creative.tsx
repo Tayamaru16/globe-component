@@ -1488,17 +1488,14 @@ export function DesignaliCreative() {
                           <Input defaultValue="sip:operator@example.com" className="rounded-2xl" />
                         </div>
                         <div className="space-y-2">
+                          <label className="text-sm font-medium">接続パスワード</label>
+                          <Input type="password" placeholder="パスワードを入力" className="rounded-2xl" />
+                        </div>
+                        <div className="space-y-2">
                           <label className="text-sm font-medium">マイクデバイス</label>
                           <select className="w-full rounded-2xl border border-input bg-background px-3 py-2">
                             <option>MacBook Proのマイク (Built-in)</option>
                             <option>USB Audio Interface</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">スピーカー</label>
-                          <select className="w-full rounded-2xl border border-input bg-background px-3 py-2">
-                            <option>内蔵スピーカー</option>
-                            <option>Bluetooth ヘッドセット</option>
                           </select>
                         </div>
                       </div>
